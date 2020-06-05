@@ -20,4 +20,31 @@ class Category(models.Model):
   def __str__(self):
     return str(self.id) + " - " + self.category[0].name if len(self.category) > 0 else str(self.id)
 
-# class Recipe(models.Model)
+
+class IngredientItem(models.Model):
+  ingredient = models.CharField(max_length=64)
+  measure = models.CharField(max_length=64)
+
+  class Meta:
+    abstract = True
+
+
+class IngredientItemForm(forms.ModelForm):
+  class Meta:
+    model = IngredientItem
+    fields = ('ingredient',)
+
+
+class Recipe(models.Model):
+  ingredients = models.ArrayField(
+    model_container=IngredientItem,
+    model_form_class=IngredientItemForm
+  )
+  categories = models.ArrayField(
+    model_container=Category
+  )
+  description = models.TextField()
+  image = models.CharField(max_length=256)
+  video = models.CharField(max_length=256)
+  country = models.CharField(max_length=256)
+
